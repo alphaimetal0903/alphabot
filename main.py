@@ -1,4 +1,4 @@
-import discord, datetime, os, youtube_dl
+import discord, datetime, os
 
 app = discord.Client(intents=discord.Intents.all())
 event = app.event
