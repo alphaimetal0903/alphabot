@@ -46,7 +46,7 @@ async def on_message(message):
 
     if command("&log") or command("&logs"):
         if author.id in admin:
-            embed = discord.Embed(title="Heroku Log", description="[Open](https://dashboard.heroku.com/apps/alphabot/logs)", color=color.purple())
+            embed = discord.Embed(title="Heroku Log", description="[Open](https://dashboard.heroku.com/apps/alphabotpyc/logs)", color=color.purple())
             await author.send(f"{author.mention}", embed=embed)
             return 0
         else:
