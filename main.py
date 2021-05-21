@@ -215,4 +215,5 @@ async def on_message(message):
                 await channel.send(f"{author.mention}", embed=embed)
                 return 0
 
-app.run('ODQ1MTkxNzg2MzkzMjM5NTgy.YKdYMA.GygEIGmt-2iE4NSUrmN4cpCGIGY')
+token = os.environ['TOKEN']
+app.run(token)
