@@ -214,9 +214,7 @@ async def on_message(message):
             await channel.send(f"{author.mention}", embed=embed)
             return 0
         else:
-            checkid = content[6:25].split("")
-            if "<" in checkid:
-                member = guild.get_member(int(content[7:25]))
+            checkid = content[6:25].split("!")
             if ">" in checkid:
                 member = guild.get_member(int(content[6:24]))
             else:
