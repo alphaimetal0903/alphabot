@@ -179,6 +179,7 @@ async def on_message(message):
                 embed.set_footer(text=emfoot)
                 embed.add_field(name="원인", value=f"`{type}` 은(는) 존재하지 않는 ActivityType 입니다.")
                 await channel.send(f"{author.mention}", embed=embed)
+                return 0
 
         else:
             embed = discord.Embed(title="명령 처리 실패", description="Status를 변경하는 도중 문제가 발생하였습니다.", color=color.red())
@@ -223,10 +224,10 @@ async def on_message(message):
         embed.set_footer(text=emfoot)
         embed.add_field(name="OWNER", value=f"{guild.owner.mention}")
         embed.add_field(name="생성 날짜", value=f"{createddate} \n생성한지 {created} 일 지남")
-        embed.add_field(name="멤버 수", value=f"총 {guild.member_count} 명")
-        embed.add_field(name="가이드라인 채널", value=f"<#{guild.rules_channel.id}>")
+        embed.add_field(name="멤버 수", value=f"총 {guild.member_count}/{guild.max_members} 명")
         embed.add_field(name="Nitro Server Boost", value=f"{guild.premium_subscription_count}개의 부스트 발견됨.\n{guild.premium_tier} 티어")
         embed.add_field(name="서버 위치", value=f"{guild.region}")
+        embed.add_field(name="보안 레벨", value=f"{guild.verification_level}")
         await channel.send(f"{author.mention}", embed=embed)
         return 0
 
