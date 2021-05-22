@@ -23,6 +23,8 @@ async def on_message(message):
     emfoot = f"By Alpha_#0903, Version {ver} ({now})"
     cmds = ["&clear", "&clean", "&접속", "&setstatus", "&setactivity", "&setpresence", "&도움", "&도움말", "&정보", "&모바일정보", "&서버정보", "&길드정보", "&채널정보", "&log", "&logs"]
 
+    print(message.guild.id)
+
     if command("&clear") or command("&clean"):
         if author.id in admin:
             if app.guilds[0].get_member(app.user.id).guild_permissions.manage_messages:
@@ -194,6 +196,8 @@ async def on_message(message):
                 member = guild.get_member(int(content[7:25]))
             if '>' in content[6:25]:
                 member = guild.get_member(int(content[6:24]))
+            else:
+                member = guild.get_member(int(content[6:25]))
         except ValueError:
             member = author
             today = datetime.date.today()
@@ -272,5 +276,5 @@ async def on_message(message):
                 await channel.send(f"{author.mention}", embed=embed)
                 return 0
 
-token = os.environ['TOKEN']
+token = 'ODQ1MTkxNzg2MzkzMjM5NTgy.YKdYMA.OkdKZSVoAvvuYvuQXiD_I0vRfz0'
 app.run(token)
