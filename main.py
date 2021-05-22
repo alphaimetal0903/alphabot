@@ -68,7 +68,7 @@ async def on_message(message):
     if command("&도움") or command("&도움말"):
         embed = discord.Embed(title="Alphabot", color=color.gold())
         embed.add_field(name="Supports", value="Alphabot에 대한 지원을 받을 수 있는 곳입니다.\n[Discord](http://disgd.gbgs.kro.kr)\n[KakaoTalk](https://open.kakao.com/me/alpha_0903)\n[GitHub](https://github.com/alphaimetal0903/Alphabot)", inline=True)
-        embed.add_field(name="Utilities", value="&정보 <멤버> | 지정한 멤버에 대한 정보를 출력합니다.\n  설정하지 않았을 경우 자신의 정보를 출력합니다.\n&서버정보 | 현재 서버에 대한 정보를 출력합니다.", inline=True)
+        embed.add_field(name="Utilities", value="&정보 <멤버> | 지정한 멤버에 대한 정보를 출력합니다.\n  설정하지 않았을 경우 자신의 정보를 엽니다.\n  모바일의 경우 정상적으로 출력되지 않을 경우 &모바일정보 <멤버> 를 사용하세요.", inline=True)
         embed.set_footer(text=emfoot)
         await channel.send(f"{author.mention}", embed=embed)
         return 0
@@ -77,7 +77,7 @@ async def on_message(message):
         if author.id in admin:
             embed = discord.Embed(title="Alphabot", color=color.purple())
             embed.add_field(name="Supports", value="Alphabot에 대한 지원을 받을 수 있는 곳입니다.\n[Discord](http://disgd.gbgs.kro.kr)\n[KakaoTalk](https://open.kakao.com/me/alpha_0903)\n[GitHub](https://github.com/alphaimetal0903/Alphabot)", inline=True)
-            embed.add_field(name="Utilities", value="&정보 <멤버> | 지정한 멤버에 대한 정보를 출력합니다.\n  설정하지 않았을 경우 자신의 정보를 출력합니다.\n&서버정보 | 현재 서버에 대한 정보를 출력합니다.", inline=True)
+            embed.add_field(name="Utilities", value="&정보 <멤버> | 지정한 멤버에 대한 정보를 출력합니다.\n  설정하지 않았을 경우 자신의 정보를 엽니다.\n  모바일의 경우 정상적으로 출력되지 않을 경우 &모바일정보 <멤버> 를 사용하세요.", inline=True)
             embed.add_field(name="Admin Tools", value="&setactivity <activity> <details> | activity = play(ing) or gam(e|ing), listen(ing), watch(ing), none\n&setstatus <status> | status = online, idle, dnd or do_not_distrub, offline or invisible or vanish\n&help\n&log(s)", inline=True)
             embed.set_footer(text=emfoot)
             await author.send(f"{author.mention}", embed=embed)
@@ -153,14 +153,14 @@ async def on_message(message):
                 await channel.send(f"{author.mention}", embed=embed)
                 return 0
 
-            if type == "listening" or type == "listen":
+            if type == "listening":
                 await app.change_presence(activity=activity(type=activitytype.listening, name=argument[1]), status=prestatus)
                 embed = discord.Embed(title="명령 처리 성공", description=f"Activity를 성공적으로 `Listening {argument[1]}` (으)로 변경하였습니다.", color=color.green())
                 embed.set_footer(text=emfoot)
                 await channel.send(f"{author.mention}", embed=embed)
                 return 0
 
-            if type == "watching" or type == "watch":
+            if type == "watching":
                 await app.change_presence(activity=activity(type=activitytype.watching, name=argument[1]), status=prestatus)
                 embed = discord.Embed(title="명령 처리 성공", description=f"Activity를 성공적으로 `Watching {argument[1]}` (으)로 변경하였습니다.", color=color.green())
                 embed.set_footer(text=emfoot)
@@ -190,11 +190,8 @@ async def on_message(message):
 
     if command("&정보"):
         try:
-            if '!' in content[6:25]:
-                member = guild.get_member(int(content[7:25]))
-            if '>' in content[6:25]:
-                member = guild.get_member(int(content[6:24]))
-        except ValueError:
+            content[7:25]
+        except NameError:
             member = author
             today = datetime.date.today()
             created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
@@ -217,10 +214,7 @@ async def on_message(message):
             await channel.send(f"{author.mention}", embed=embed)
             return 0
         else:
-            if '!' in content[6:25]:
-                member = guild.get_member(int(content[7:25]))
-            if '>' in content[6:25]:
-                member = guild.get_member(int(content[6:24]))
+            member = guild.get_member(int(content[7:25]))
             today = datetime.date.today()
             created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
             created = today - created
@@ -237,7 +231,7 @@ async def on_message(message):
             embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
             embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n생성한지 {joined} 일 지남", inline=True)
             embed.add_field(name="현재 상태", value=str(member.status), inline=True)
-            embed.add_field(name="현재 하는 중", value=member.activity.name, inline=True)
+            embed.add_field(name="현재 하는 중", value=str(member.activity), inline=True)
             embed.set_footer(text=emfoot)
             await channel.send(f"{author.mention}", embed=embed)
             return 0
@@ -272,5 +266,5 @@ async def on_message(message):
                 await channel.send(f"{author.mention}", embed=embed)
                 return 0
 
-token = os.environ['TOKEN']
+token = 'ODQ1MTkxNzg2MzkzMjM5NTgy.YKdYMA._2Vp98QZBPad1NXONYx7ZeIjr7g'
 app.run(token)
