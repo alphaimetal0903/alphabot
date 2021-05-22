@@ -219,10 +219,8 @@ async def on_message(message):
         else:
             if '!' in content[6:25]:
                 member = guild.get_member(int(content[7:25]))
-                print(content[7:25])
             if '>' in content[6:25]:
                 member = guild.get_member(int(content[6:24]))
-                print(content[6:24])
             today = datetime.date.today()
             created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
             created = today - created
