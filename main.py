@@ -190,7 +190,7 @@ async def on_message(message):
 
     if command("&정보"):
         try:
-            content[7:25]
+            content[6:25]
         except NameError:
             member = author
             today = datetime.date.today()
