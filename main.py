@@ -214,11 +214,7 @@ async def on_message(message):
             await channel.send(f"{author.mention}", embed=embed)
             return 0
         else:
-            checkid = content[6:25].split("!")
-            if ">" in checkid:
-                member = guild.get_member(int(content[6:24]))
-            else:
-                member = guild.get_member(int(content[7:25]))
+            member = guild.get_member(int(content[7:25]))
             today = datetime.date.today()
             created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
             created = today - created
