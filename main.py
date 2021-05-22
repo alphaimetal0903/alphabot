@@ -10,7 +10,7 @@ color = discord.Colour
 @event
 async def on_ready():
     print(f"{app.user} ({app.user.id}) 로 접속 성공.")
-    await app.change_presence(activity=discord.Activity(type=activitytype.playing, name="Temporarily undergoing"), status=dnd)
+    await app.change_presence(activity=discord.Activity(type=activitytype.playing, name="Temporarily undergoing"), status=discord.Status.dnd)
 
 token = os.environ['TOKEN']
 app.run(token)
