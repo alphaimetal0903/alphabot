@@ -189,27 +189,58 @@ async def on_message(message):
             return 0
 
     if command("&정보"):
-        member = guild.get_member(int(content[7:25]))
-        today = datetime.date.today()
-        created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
-        created = today - created
-        created = str(created).split(" ", 1)
-        created = created[0]
-        createddate = member.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
-        joined = datetime.date(int(member.joined_at.strftime('%Y')), int(member.joined_at.strftime('%m')), int(member.joined_at.strftime('%d')))
-        joined = today - joined
-        joined = str(joined).split(" ", 1)
-        joined = joined[0]
-        joineddate = member.joined_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
-        embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
-        embed.set_thumbnail(url=member.avatar_url)
-        embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
-        embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n생성한지 {joined} 일 지남", inline=True)
-        embed.add_field(name="현재 상태", value=str(member.status), inline=True)
-        embed.add_field(name="현재 하는 중", value=str(member.activity), inline=True)
-        embed.set_footer(text=emfoot)
-        await channel.send(f"{author.mention}", embed=embed)
-        return 0
+        try:
+            content[7:25]
+        except NameError:
+            member = author
+            today = datetime.date.today()
+            created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
+            created = today - created
+            created = str(created).split(" ", 1)
+            created = created[0]
+            createddate = member.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            joined = datetime.date(int(member.joined_at.strftime('%Y')), int(member.joined_at.strftime('%m')), int(member.joined_at.strftime('%d')))
+            joined = today - joined
+            joined = str(joined).split(" ", 1)
+            joined = joined[0]
+            joineddate = member.joined_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
+            embed.set_thumbnail(url=member.avatar_url)
+            embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
+            embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n생성한지 {joined} 일 지남", inline=True)
+            embed.add_field(name="현재 상태", value=str(member.status), inline=True)
+            embed.add_field(name="현재 하는 중", value=str(member.activity), inline=True)
+            embed.set_footer(text=emfoot)
+            await channel.send(f"{author.mention}", embed=embed)
+            return 0
+        else:
+            checkid = content[6:25].split("")
+            if "<" in checkid:
+                member = guild.get_member(int(content[7:25]))
+            if ">" in checkid:
+                member = guild.get_member(int(content[6:24]))
+            else:
+                member = guild.get_member(int(content[7:25]))
+            today = datetime.date.today()
+            created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
+            created = today - created
+            created = str(created).split(" ", 1)
+            created = created[0]
+            createddate = member.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            joined = datetime.date(int(member.joined_at.strftime('%Y')), int(member.joined_at.strftime('%m')), int(member.joined_at.strftime('%d')))
+            joined = today - joined
+            joined = str(joined).split(" ", 1)
+            joined = joined[0]
+            joineddate = member.joined_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
+            embed.set_thumbnail(url=member.avatar_url)
+            embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
+            embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n생성한지 {joined} 일 지남", inline=True)
+            embed.add_field(name="현재 상태", value=str(member.status), inline=True)
+            embed.add_field(name="현재 하는 중", value=str(member.activity), inline=True)
+            embed.set_footer(text=emfoot)
+            await channel.send(f"{author.mention}", embed=embed)
+            return 0
 
     if command("&서버정보") or command("&길드정보"):
         today = datetime.date.today()
@@ -228,29 +259,6 @@ async def on_message(message):
         embed.add_field(name="Nitro Server Boost", value=f"{guild.premium_subscription_count}개의 부스트 발견됨.\n{guild.premium_tier} 티어")
         embed.add_field(name="서버 위치", value=f"{guild.region}")
         embed.add_field(name="보안 레벨", value=f"{guild.verification_level}")
-        await channel.send(f"{author.mention}", embed=embed)
-        return 0
-
-    if command("&모바일정보"):
-        member = guild.get_member(int(content[9:27]))
-        today = datetime.date.today()
-        created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
-        created = today - created
-        created = str(created).split(" ", 1)
-        created = created[0]
-        createddate = member.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
-        joined = datetime.date(int(member.joined_at.strftime('%Y')), int(member.joined_at.strftime('%m')), int(member.joined_at.strftime('%d')))
-        joined = today - joined
-        joined = str(joined).split(" ", 1)
-        joined = joined[0]
-        joineddate = member.joined_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
-        embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
-        embed.set_thumbnail(url=member.avatar_url)
-        embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
-        embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n생성한지 {joined} 일 지남", inline=True)
-        embed.add_field(name="현재 상태", value=str(member.status), inline=True)
-        embed.add_field(name="현재 하는 중", value=str(member.activity), inline=True)
-        embed.set_footer(text=emfoot)
         await channel.send(f"{author.mention}", embed=embed)
         return 0
 
