@@ -17,10 +17,11 @@ async def on_message(message):
     command = content.startswith
     author = message.author
     channel = message.channel
+    guild = message.guild
     now = datetime.datetime.now().strftime('%Y년 %m월 %d일 %p %I시 %M분 %S.%f초')
-    ver = ""
+    ver = "210522a"
     emfoot = f"By Alpha_#0903, Version {ver} ({now})"
-    cmds = ["&clear", "&clean", "&접속", "&setstatus", "&setactivity", "&setpresence", "&도움", "&도움말", "&정보", "&모바일정보", "&서버정보", "&채널정보", "&log", "&logs"]
+    cmds = ["&clear", "&clean", "&접속", "&setstatus", "&setactivity", "&setpresence", "&도움", "&도움말", "&정보", "&모바일정보", "&서버정보", "&길드정보", "&채널정보", "&log", "&logs"]
 
     if command("&clear") or command("&clean"):
         if author.id in admin:
@@ -187,7 +188,7 @@ async def on_message(message):
             return 0
 
     if command("&정보"):
-        member = message.guild.get_member(int(content[7:25]))
+        member = guild.get_member(int(content[7:25]))
         today = datetime.date.today()
         created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
         created = today - created
@@ -209,8 +210,28 @@ async def on_message(message):
         await channel.send(f"{author.mention}", embed=embed)
         return 0
 
+    if command("&서버정보") or command("&길드정보"):
+        today = datetime.date.today()
+        created = datetime.date(int(guild.created_at.strftime('%Y')), int(guild.created_at.strftime('%m')), int(guild.created_at.strftime('%d')))
+        created = today - created
+        created = str(created).split(" ", 1)
+        created = created[0]
+        createddate = guild.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+        embed = discord.Embed(title=f"{guild} 의 정보")
+        embed.set_thumbnail(url=guild.icon_url)
+        embed.set_image(url=guild.banner_url)
+        embed.set_footer(text=emfoot)
+        embed.add_field(name="OWNER", value=f"{guild.owner.mention}")
+        embed.add_field(name="생성 날짜", value=f"{createddate} \n생성한지 {created} 일 지남")
+        embed.add_field(name="멤버 수", value=f"총 {guild.member_count} 명")
+        embed.add_field(name="가이드라인 채널", value=f"<#{guild.rules_channel.id}>")
+        embed.add_field(name="Nitro Server Boost", value=f"{guild.premium_subscription_count}개의 부스트 발견됨.\n{guild.premium_tier} 티어")
+        embed.add_field(name="서버 위치", value=f"{guild.region}")
+        await channel.send(f"{author.mention}", embed=embed)
+        return 0
+
     if command("&모바일정보"):
-        member = message.guild.get_member(int(content[9:27]))
+        member = guild.get_member(int(content[9:27]))
         today = datetime.date.today()
         created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
         created = today - created
