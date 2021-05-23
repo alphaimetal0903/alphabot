@@ -1,4 +1,7 @@
-import discord, datetime, os
+import discord, datetime, os, asyncio, time, bs4, youtube_dl, selenium, discord.utils
+from selenium import webdriver
+from bs4 import *
+from discord.utils import *
 
 app = discord.Client(intents=discord.Intents.all())
 event = app.event
@@ -10,6 +13,7 @@ color = discord.Colour
 @event
 async def on_ready():
     print(f"{app.user} ({app.user.id}) 로 접속 성공.")
+    print(os.getcwd())
 
 @event
 async def on_message(message):
@@ -23,7 +27,10 @@ async def on_message(message):
     emfoot = f"By Alpha_#0903, Version {ver} ({now})"
     cmds = ["&clear", "&clean", "&접속", "&setstatus", "&setactivity", "&setpresence", "&도움", "&도움말", "&정보", "&모바일정보", "&서버정보", "&길드정보", "&채널정보", "&log", "&logs"]
 
-    print(message.guild.id)
+    try:
+        guild.id
+    except AttributeError:
+        return 0
 
     if command("&clear") or command("&clean"):
         if author.id in admin:
@@ -191,14 +198,51 @@ async def on_message(message):
             return 0
 
     if command("&정보"):
-        try:
-            if '!' in content[6:25]:
-                member = guild.get_member(int(content[7:25]))
-            if '>' in content[6:25]:
-                member = guild.get_member(int(content[6:24]))
-            else:
-                member = guild.get_member(int(content[6:25]))
-        except ValueError:
+        if "!" in content[6:25]:
+            member = guild.get_member(int(content[7:25]))
+            today = datetime.date.today()
+            created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
+            created = today - created
+            created = str(created).split(" ", 1)
+            created = created[0]
+            createddate = member.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            joined = datetime.date(int(member.joined_at.strftime('%Y')), int(member.joined_at.strftime('%m')), int(member.joined_at.strftime('%d')))
+            joined = today - joined
+            joined = str(joined).split(" ", 1)
+            joined = joined[0]
+            joineddate = member.joined_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
+            embed.set_thumbnail(url=member.avatar_url)
+            embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
+            embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n접속한지 {joined} 일 지남", inline=True)
+            embed.add_field(name="현재 상태", value=str(member.status), inline=True)
+            embed.add_field(name="현재 하는 중", value=member.activity, inline=True)
+            embed.set_footer(text=emfoot)
+            await channel.send(f"{author.mention}", embed=embed)
+            return 0
+        if ">" in content[6:25]:
+            member = guild.get_member(int(content[6:24]))
+            today = datetime.date.today()
+            created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
+            created = today - created
+            created = str(created).split(" ", 1)
+            created = created[0]
+            createddate = member.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            joined = datetime.date(int(member.joined_at.strftime('%Y')), int(member.joined_at.strftime('%m')), int(member.joined_at.strftime('%d')))
+            joined = today - joined
+            joined = str(joined).split(" ", 1)
+            joined = joined[0]
+            joineddate = member.joined_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
+            embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
+            embed.set_thumbnail(url=member.avatar_url)
+            embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
+            embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n접속한지 {joined} 일 지남", inline=True)
+            embed.add_field(name="현재 상태", value=str(member.status), inline=True)
+            embed.add_field(name="현재 하는 중", value=member.activity.name, inline=True)
+            embed.set_footer(text=emfoot)
+            await channel.send(f"{author.mention}", embed=embed)
+            return 0
+        else:
             member = author
             today = datetime.date.today()
             created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
@@ -214,34 +258,9 @@ async def on_message(message):
             embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
             embed.set_thumbnail(url=member.avatar_url)
             embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
-            embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n생성한지 {joined} 일 지남", inline=True)
+            embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n접속한지 {joined} 일 지남", inline=True)
             embed.add_field(name="현재 상태", value=str(member.status), inline=True)
             embed.add_field(name="현재 하는 중", value=str(member.activity), inline=True)
-            embed.set_footer(text=emfoot)
-            await channel.send(f"{author.mention}", embed=embed)
-            return 0
-        else:
-            if '!' in content[6:25]:
-                member = guild.get_member(int(content[7:25]))
-            if '>' in content[6:25]:
-                member = guild.get_member(int(content[6:24]))
-            today = datetime.date.today()
-            created = datetime.date(int(member.created_at.strftime('%Y')), int(member.created_at.strftime('%m')), int(member.created_at.strftime('%d')))
-            created = today - created
-            created = str(created).split(" ", 1)
-            created = created[0]
-            createddate = member.created_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
-            joined = datetime.date(int(member.joined_at.strftime('%Y')), int(member.joined_at.strftime('%m')), int(member.joined_at.strftime('%d')))
-            joined = today - joined
-            joined = str(joined).split(" ", 1)
-            joined = joined[0]
-            joineddate = member.joined_at.strftime('%Y년 %m월 %d일\n%p %I시 %M분 %S.%f초')
-            embed = discord.Embed(title=f"{member} 의 정보", color=member.color)
-            embed.set_thumbnail(url=member.avatar_url)
-            embed.add_field(name="계정 생성 일자", value=f"{createddate} \n생성한지 {created} 일 지남", inline=True)
-            embed.add_field(name="서버 가입 일자", value=f"{joineddate} \n생성한지 {joined} 일 지남", inline=True)
-            embed.add_field(name="현재 상태", value=str(member.status), inline=True)
-            embed.add_field(name="현재 하는 중", value=member.activity.name, inline=True)
             embed.set_footer(text=emfoot)
             await channel.send(f"{author.mention}", embed=embed)
             return 0
@@ -266,15 +285,260 @@ async def on_message(message):
         await channel.send(f"{author.mention}", embed=embed)
         return 0
 
+    # if command("&connect"):
+    #     try:
+    #         await author.voice.channel.connect()
+    #     except AttributeError:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value=f"{author.mention} 님이 접속하신 음성 채널을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="먼저 음성 채널에 접속한 후 다시 시도하세요.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #     except discord.errors.ClientException:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value=f"이미 <#{author.voice.channel.id}> 에 연결되어 있습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&disconnect` 를 사용하여 음성 채널에서 연결을 해제할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #     else:
+    #         embed = discord.Embed(title="명령 처리 성공", description=f"<#{author.voice.channel.id}> 에 성공적으로 연결했습니다.", color=color.green())
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    # if command("&disconnect"):
+    #     for vc in app.voice_clients:
+    #         if vc.guild == guild:
+    #             voice = vc
+    #     try:
+    #         await voice.disconnect()
+    #     except:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #     else:
+    #         embed = discord.Embed(title="명령 처리 성공", description=f"성공적으로 연결을 해제했습니다.", color=color.green())
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    # if command("&재생"):
+    #     for vc in app.voice_clients:
+    #         if vc.guild == guild:
+    #             vc = vc
+    #
+    #     try:
+    #         vc.is_connected()
+    #     except UnboundLocalError:
+    #         await author.voice.channel.connect()
+    #
+    #     for vc in app.voice_clients:
+    #         if vc.guild == guild:
+    #             vc = vc
+    #
+    #     global entireText
+    #     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+    #     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+    #
+    #     dir = os.getcwd()
+    #     edgedriver_dir = f"{dir}/driver/msedgedriver.exe"
+    #     options = webdriver.EdgeOptions()
+    #     options.add_argument("headless")
+    #     driver = webdriver.Edge(edgedriver_dir, options=options)
+    #     driver.get(f"https://www.youtube.com/results?search_query={content[4:]}")
+    #     source = driver.page_source
+    #     bs = bs4.BeautifulSoup(source, 'lxml')
+    #     entire = bs.find_all('a', {'id': 'video-title'})
+    #     entireNum = entire[0]
+    #     entireText = entireNum.text.strip()
+    #     musicurl = entireNum.get('href')
+    #     url = 'https://www.youtube.com'+musicurl
+    #     driver.quit()
+    #
+    #     with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+    #         info = ydl.extract_info(url, download=False)
+    #     URL = info['formats'][0]['url']
+    #
+    #     try:
+    #         vc.play(discord.FFmpegPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source=URL, options=FFMPEG_OPTIONS))
+    #     except UnboundLocalError:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #     else:
+    #         embed = discord.Embed(title="명령 처리 성공", description=f"재생을 시작합니다.", color=color.green())
+    #         embed.add_field(name=f"{entireText}", value="By <channel>")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    # if command("&정지"):
+    #     for vc in app.voice_clients:
+    #         if vc.guild == guild:
+    #             voice = vc
+    #
+    #     try:
+    #         voice.is_playing()
+    #     except UnboundLocalError:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    #     if voice.is_playing():
+    #         try:
+    #             voice.stop()
+    #         except:
+    #             embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #             embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #             embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #         else:
+    #             embed = discord.Embed(title="명령 처리 성공", description=f"재생을 정지했습니다.", color=color.green())
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #     else:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="재생 중인 영상을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&재생` 을 사용하여 영상을 재생할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    # if command("&멈춰!"):
+    #     for vc in app.voice_clients:
+    #         if vc.guild == guild:
+    #             voice = vc
+    #
+    #     try:
+    #         voice.is_playing()
+    #     except UnboundLocalError:
+    #         embed = discord.Embed(title="**멈춰!** 실패", description="귀 폭력을 멈추는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="어디서 `멈춰!` 를 사용하는지 알수가 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    #     if voice.is_playing():
+    #         try:
+    #             voice.stop()
+    #         except:
+    #             embed = discord.Embed(title="**멈춰!** 실패", description="귀 폭력을 멈추는 도중 문제가 발생하였습니다.", color=color.red())
+    #             embed.add_field(name="원인", value="어디서 `멈춰!` 를 사용하는지 알수가 없습니다.", inline=False)
+    #             embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #         else:
+    #             embed = discord.Embed(title="**멈춰!** 성공", description=f"귀 폭력을 성공적으로 멈추고, 재생중이었던 음악을 `교무실`로 보냈습니다.", color=color.green())
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #     else:
+    #         embed = discord.Embed(title="**멈춰!** 실패", description="귀 폭력을 멈추는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="진행중인 귀 폭력이 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&재생` 을 영상을 재생할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    # if command("&일시정지"):
+    #     for vc in app.voice_clients:
+    #         if vc.guild == guild:
+    #             voice = vc
+    #
+    #     try:
+    #         voice.is_playing()
+    #     except UnboundLocalError:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    #     if voice.is_playing():
+    #         try:
+    #             voice.pause()
+    #         except:
+    #             embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #             embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #             embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #         else:
+    #             embed = discord.Embed(title="명령 처리 성공", description=f"재생을 일시 정지했습니다.", color=color.green())
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #     else:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="재생 중인 영상을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&재생` 을 사용하여 영상을 재생할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    # if command("&다시재생"):
+    #     for vc in app.voice_clients:
+    #         if vc.guild == guild:
+    #             voice = vc
+    #
+    #     try:
+    #         voice.is_paused()
+    #     except UnboundLocalError:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #         embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+    #
+    #     if voice.is_paused():
+    #         try:
+    #             voice.resume()
+    #         except:
+    #             embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #             embed.add_field(name="원인", value="접속된 음성 채널을 찾을 수 없습니다.", inline=False)
+    #             embed.add_field(name="해결 방법", value="`&connect` 를 사용하여 음성 채널에 연결할 수 있습니다.")
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #         else:
+    #             embed = discord.Embed(title="명령 처리 성공", description=f"다시 재생합니다.", color=color.green())
+    #             embed.set_footer(text=emfoot)
+    #             await channel.send(f"{author.mention}", embed=embed)
+    #             return 0
+    #     else:
+    #         embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+    #         embed.add_field(name="원인", value="일시 정지 된 영상을 찾을 수 없습니다.", inline=False)
+    #         embed.set_footer(text=emfoot)
+    #         await channel.send(f"{author.mention}", embed=embed)
+    #         return 0
+
     else:
         if command("&"):
-            if command not in cmds:
-                embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
-                embed.add_field(name="원인", value=f"{content} 은(는) 존재하지 않는 명령어입니다.", inline=False)
-                embed.add_field(name="해결 방법", value="&도움 또는 &도움말을 입력해 명령어를 확인해보세요.")
-                embed.set_footer(text=emfoot)
-                await channel.send(f"{author.mention}", embed=embed)
-                return 0
+            embed = discord.Embed(title="명령 처리 실패", description="명령어를 처리하는 도중 문제가 발생하였습니다.", color=color.red())
+            embed.add_field(name="원인", value=f"{content} 은(는) 존재하지 않는 명령어입니다.", inline=False)
+            embed.add_field(name="해결 방법", value="&도움 또는 &도움말을 입력해 명령어를 확인해보세요.")
+            embed.set_footer(text=emfoot)
+            await channel.send(f"{author.mention}", embed=embed)
+            return 0
 
-token = 'ODQ1MTkxNzg2MzkzMjM5NTgy.YKdYMA.OkdKZSVoAvvuYvuQXiD_I0vRfz0'
+token = os.environ['TOKEN']
 app.run(token)
